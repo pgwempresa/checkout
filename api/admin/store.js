@@ -15,21 +15,43 @@ async function handler(req, res) {
     let debugTrace = {};
     const connection = await recordStorePing(req.body || {});
     
-    // Manual test of kvSet and kvGet for the specific state key
+    // Direct Upstash test
     try {
-        const { getStorageMode, getKvConfig } = await import("../../lib/runtime/state.js");
-        if (getStorageMode() === "redis") {
-            const { url, token } = getKvConfig();
+        const url = process.env.KV_REST_API_URL || process.env.STORAGE_REST_API_URL;
+        const token = process.env.KV_REST_API_TOKEN || process.env.STORAGE_REST_API_TOKEN;
+        
+        if (url && token) {
+            // SET test exactly like kvSet
+            const testObj = { storeConnection: { status: "test", lastPingAt: new Date().toISOString() } };
+            const cmdSet = ["SET", "checkout_pay_state_v1", JSON.stringify(testObj)];
             
-            // Raw GET test
+            const setRes = await fetch(`${url}/pipeline`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify([cmdSet])
+            });
+            debugTrace.setResponse = await setRes.text();
+            
+            // GET test exactly like kvGet
             const getRes = await fetch(`${url}/pipeline`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
                 body: JSON.stringify([["GET", "checkout_pay_state_v1"]])
             });
-            const getData = await getRes.json();
+            const getJson = await getRes.json();
+            debugTrace.getResponse = getJson;
             
-            debugTrace.rawGet = getData;
+            const item = getJson?.[0]?.result;
+            debugTrace.itemRaw = item;
+            debugTrace.itemType = typeof item;
+            
+            try {
+                const parsed = JSON.parse(item);
+                debugTrace.parsed = parsed;
+                debugTrace.parsedType = typeof parsed;
+            } catch(e) {
+                debugTrace.parseError = e.message;
+            }
         }
     } catch(err) {
         debugTrace.error = err.message;
