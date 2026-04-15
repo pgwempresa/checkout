@@ -11,7 +11,7 @@ async function handler(req, res) {
         ok:             true,
         now:            new Date().toISOString(),
         activeProvider: await getActiveProviderId(),
-        runtime:        getRuntimeInfo(),
+        runtime:        { ...getRuntimeInfo(), dbgUrl: process.env.STORAGE_REST_API_URL?.substring(0,10), dbgTok: !!process.env.STORAGE_REST_API_TOKEN },
         connection:     await getStoreConnectionStatus()
     });
 }
