@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "routes": [
+    { "src": "/checkout-client.js", "dest": "/checkout-client.js" },
+    { "src": "/assets/(.*)",        "dest": "/assets/$1" },
+    { "src": "/login",              "dest": "/login.html" },
+    { "src": "/checkout",           "dest": "/checkout.html" },
+    { "src": "/",                   "dest": "/index.html" },
+    { "handle": "filesystem" }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "checkout-pay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test lib/**/*.test.js",
+    "start": "node server.js",
+    "dev": "vercel dev",
+    "setup": "node scripts/vercel-setup.mjs",
+    "setup:deploy": "node scripts/vercel-setup.mjs --deploy",
+    "deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  }
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CheckoutPay — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/admin.css">
+</head>
+<body>
+  <div class="bg-orbs"></div>
+  <div class="bg-grid"></div>
+
+  <div class="app">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-brand">
+        <div class="brand-icon">⚡</div>
+        <span class="brand-name">CheckoutPay</span>
+        <span class="brand-tag">Admin</span>
+      </div>
+
+      <div class="topbar-live" id="topbar-live">
+        <!-- preenchido pelo JS -->
+      </div>
+
+      <div class="topbar-actions">
+        <button class="icon-btn" data-action="refresh" title="Atualizar painel">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+        </button>
+        <button class="btn btn-ghost" data-action="logout">Sair</button>
+      </div>
+    </header>
+
+    <!-- Tab Nav -->
+    <nav class="tabs-nav">
+      <button class="tab-item is-active" data-tab="overview">Visão Geral</button>
+      <button class="tab-item" data-tab="orders">Pedidos</button>
+      <button class="tab-item" data-tab="providers">Adquirentes</button>
+      <button class="tab-item" data-tab="store">Loja</button>
+      <button class="tab-item" data-tab="integration">Integração</button>
+      <button class="tab-item" data-tab="analytics">Analytics</button>
+      <button class="tab-item" data-tab="stores">Lojas</button>
+    </nav>
+
+    <!-- Panels -->
+    <main class="content">
+      <section class="panel is-active" id="panel-overview"></section>
+      <section class="panel" id="panel-orders"></section>
+      <section class="panel" id="panel-providers"></section>
+      <section class="panel" id="panel-store"></section>
+      <section class="panel" id="panel-integration"></section>
+      <section class="panel" id="panel-analytics"></section>
+      <section class="panel" id="panel-stores"></section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="/assets/admin.js"></script>
+</body>
+</html>

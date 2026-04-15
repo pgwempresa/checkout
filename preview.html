@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Control Center Preview</title>
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="noise"></div>
+    <div class="layout">
+        <header class="hero fade-up">
+            <div class="hero-copy">
+                <span class="eyebrow">Checkout Orquestrado</span>
+                <h1>Seu checkout vira uma central para loja, pedidos e adquirentes.</h1>
+                <p>
+                    Use este painel para validar a conexao da sua loja HTML, acompanhar pedidos recentes
+                    e trocar a adquirente ativa sem reescrever o frontend.
+                </p>
+                <div class="hero-actions">
+                    <button class="button button-primary">Atualizar Painel</button>
+                    <a class="button button-secondary" href="#integration">Abrir Bridge JS</a>
+                </div>
+            </div>
+            <section class="hero-card">
+                <div>
+                    <span class="tiny-label">Painel agora</span>
+                    <h3>Checkout Control Center</h3>
+                    <p>Operacao centralizada para checkout HTML com adquirentes desacopladas.</p>
+                </div>
+                <div class="glance-grid">
+                    <div class="glance-item">
+                        <span>Adquirente ativa</span>
+                        <strong>Bestfy</strong>
+                    </div>
+                    <div class="glance-item">
+                        <span>Status da loja</span>
+                        <strong>connected</strong>
+                    </div>
+                    <div class="glance-item">
+                        <span>Pedidos recentes</span>
+                        <strong>18</strong>
+                    </div>
+                    <div class="glance-item">
+                        <span>Provedores prontos</span>
+                        <strong>2</strong>
+                    </div>
+                </div>
+                <div class="pill warning">Runtime: sessao temporaria</div>
+            </section>
+        </header>
+
+        <nav class="tabs fade-up" aria-label="Abas do painel">
+            <button class="tab is-active">Visao geral</button>
+            <button class="tab">Loja</button>
+            <button class="tab">Pedidos</button>
+            <button class="tab">Adquirentes</button>
+            <button class="tab">Integracao</button>
+        </nav>
+
+        <main class="panels">
+            <section class="panel is-active fade-up">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Resumo operacional</p>
+                        <h2>Veja o checkout respirar</h2>
+                    </div>
+                    <button class="button button-secondary">Simular Conexao da Loja</button>
+                </div>
+
+                <div class="metrics">
+                    <article class="metric-card">
+                        <span>Checkout publico</span>
+                        <strong>checkout.seudominio.com</strong>
+                        <span>Base</span>
+                    </article>
+                    <article class="metric-card">
+                        <span>Loja conectada</span>
+                        <strong>15/04/2026 00:24</strong>
+                        <span>Ultimo ping</span>
+                    </article>
+                    <article class="metric-card">
+                        <span>Adquirente</span>
+                        <strong>Bestfy</strong>
+                        <span>Ativa</span>
+                    </article>
+                    <article class="metric-card">
+                        <span>Pedidos</span>
+                        <strong>18 no painel</strong>
+                        <span>Fluxo</span>
+                    </article>
+                </div>
+
+                <div class="split-grid">
+                    <article class="surface">
+                        <div class="inline-actions">
+                            <span class="pill">connected</span>
+                        </div>
+                        <h3>Saude da conexao</h3>
+                        <p>Sua loja HTML esta batendo no checkout e o painel recebeu heartbeat recente.</p>
+                        <div class="status-row">
+                            <span class="status-dot connected"></span>
+                            <div>
+                                <strong>Loja:</strong> Minha Loja Oficial
+                                <div class="muted">https://www.minhaloja.com.br</div>
+                            </div>
+                        </div>
+                        <div class="status-row">
+                            <span class="status-dot connected"></span>
+                            <div>
+                                <strong>Checkout:</strong> https://checkout.seudominio.com
+                                <div class="muted">Ultimo caminho visto: /checkout</div>
+                            </div>
+                        </div>
+                        <div class="status-row">
+                            <span class="status-dot connected"></span>
+                            <div>
+                                <strong>Heartbeat:</strong> 15/04/2026 00:24
+                                <div class="muted">Origem: checkout-client:init</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="surface">
+                        <h3>Movimento recente</h3>
+                        <p>O painel mostra as ultimas criacoes de pedido registradas pelo checkout.</p>
+                        <div class="orders-list">
+                            <article class="order-card">
+                                <div class="order-head">
+                                    <div>
+                                        <strong>PED-1048</strong>
+                                        <div class="muted">Maria Silva</div>
+                                    </div>
+                                    <span class="pill">pending</span>
+                                </div>
+                                <div class="meta-grid">
+                                    <span class="meta-pill">bestfy</span>
+                                    <span class="meta-pill">R$ 167,90</span>
+                                    <span class="meta-pill">15/04/2026 00:22</span>
+                                </div>
+                            </article>
+
+                            <article class="order-card">
+                                <div class="order-head">
+                                    <div>
+                                        <strong>PED-1047</strong>
+                                        <div class="muted">Joao Costa</div>
+                                    </div>
+                                    <span class="pill">approved</span>
+                                </div>
+                                <div class="meta-grid">
+                                    <span class="meta-pill">velana</span>
+                                    <span class="meta-pill">R$ 229,80</span>
+                                    <span class="meta-pill">15/04/2026 00:17</span>
+                                </div>
+                            </article>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel is-active fade-up">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Adquirentes</p>
+                        <h2>Escolha quem processa os pagamentos</h2>
+                    </div>
+                </div>
+
+                <article class="surface provider-surface">
+                    <div class="provider-grid">
+                        <article class="provider-card active-card">
+                            <div class="provider-head">
+                                <div>
+                                    <span class="pill">ativa</span>
+                                    <h3>Bestfy</h3>
+                                    <p>Gateway com suporte a transacoes diretas e checkout hospedado.</p>
+                                </div>
+                                <div class="muted">pix, boleto, credit_card</div>
+                            </div>
+                            <div class="meta-grid">
+                                <span class="meta-pill">BESTFY_SECRET_KEY</span>
+                            </div>
+                            <div class="provider-actions">
+                                <button class="button button-primary">Em uso agora</button>
+                                <a class="button button-ghost" href="https://bestfy.readme.io/reference/introducao">Documentacao</a>
+                            </div>
+                        </article>
+
+                        <article class="provider-card">
+                            <div class="provider-head">
+                                <div>
+                                    <span class="pill warning">configurada</span>
+                                    <h3>Velana</h3>
+                                    <p>Adapter legado da Velana para manter compatibilidade com sua operacao atual.</p>
+                                </div>
+                                <div class="muted">pix</div>
+                            </div>
+                            <div class="meta-grid">
+                                <span class="meta-pill">VELANA_SECRET_KEY</span>
+                            </div>
+                            <div class="provider-actions">
+                                <button class="button button-secondary">Ativar no painel</button>
+                            </div>
+                        </article>
+                    </div>
+                </article>
+            </section>
+
+            <section class="panel is-active fade-up" id="integration">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Integracao HTML</p>
+                        <h2>Plugue sua loja atual sem virar plataforma</h2>
+                    </div>
+                    <button class="button button-secondary">Copiar Snippet</button>
+                </div>
+
+                <div class="split-grid">
+                    <article class="surface">
+                        <h3>Como encaixar na sua loja HTML</h3>
+                        <p>Sua loja continua dona do carrinho, order bumps e da tela. O checkout-pay so vira o motor de pagamento.</p>
+                        <div class="check-grid">
+                            <div class="check-item">
+                                <span class="status-dot connected"></span>
+                                <div>
+                                    <strong>1. Inclua o script</strong>
+                                    <div class="muted">Aponte para checkout.seudominio.com/checkout-client.js.</div>
+                                </div>
+                            </div>
+                            <div class="check-item">
+                                <span class="status-dot connected"></span>
+                                <div>
+                                    <strong>2. Inicialize a loja</strong>
+                                    <div class="muted">Envie storeId, storeName e storeUrl para registrar o heartbeat.</div>
+                                </div>
+                            </div>
+                            <div class="check-item">
+                                <span class="status-dot connected"></span>
+                                <div>
+                                    <strong>3. Finalize o pedido</strong>
+                                    <div class="muted">Use CheckoutClient.createCheckout com items, customer e shipping.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="surface code-surface">
+<pre><code>&lt;script src="https://checkout.seudominio.com/checkout-client.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  CheckoutClient.init({
+    baseUrl: "https://checkout.seudominio.com",
+    storeId: "minha-loja",
+    storeName: "Minha Loja",
+    storeUrl: "https://www.minhaloja.com.br"
+  });
+
+  async function finalizarCompra(cart, customer) {
+    return CheckoutClient.createCheckout({
+      referenceId: "PED-" + Date.now(),
+      paymentMethod: "pix",
+      customer,
+      items: cart
+    });
+  }
+&lt;/script&gt;</code></pre>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

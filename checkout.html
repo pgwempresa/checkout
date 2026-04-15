@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagar — CheckoutPay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/checkout.css">
+</head>
+<body>
+  <div class="bg-orbs"></div>
+  <div class="bg-grid"></div>
+
+  <main class="page">
+    <div class="brand fu">
+      <div class="brand-icon">⚡</div>
+      <span class="brand-name">CheckoutPay</span>
+    </div>
+
+    <div class="card fu">
+      <!-- Header: amount + ref -->
+      <div class="card-head">
+        <div>
+          <span class="order-ref" id="order-ref">Carregando...</span>
+          <span class="order-amount" id="order-amount">—</span>
+        </div>
+        <span class="method-badge" id="method-badge">PIX</span>
+      </div>
+
+      <!-- Body: states -->
+      <div class="card-body">
+
+        <!-- State: loading -->
+        <div class="state active" id="state-loading">
+          <div class="loading-wrap">
+            <div class="spinner"></div>
+            <span class="loading-text">Carregando pagamento...</span>
+          </div>
+        </div>
+
+        <!-- State: PIX awaiting payment -->
+        <div class="state" id="state-pix">
+          <div class="qr-wrap">
+            <div class="status-line">
+              <span class="status-dot"></span>
+              <span>Aguardando pagamento</span>
+            </div>
+
+            <div class="qr-img-box" id="qr-img-box">
+              <div class="qr-placeholder">QR Code</div>
+            </div>
+
+            <button class="copy-btn" id="copy-btn" onclick="copyPix()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copiar código PIX
+            </button>
+
+            <div class="pix-code-wrap" id="pix-code-wrap" style="display:none;">
+              <div class="pix-code-label">Código PIX copia e cola</div>
+              <div class="pix-code-text" id="pix-code-text" onclick="copyPix()"></div>
+            </div>
+
+            <div class="timer-wrap" id="timer-wrap" style="display:none;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              Expira em <span class="timer-val" id="timer-val">30:00</span>
+            </div>
+
+            <div class="how-title">Como pagar</div>
+            <div class="how-steps">
+              <div class="how-step">
+                <span class="how-num">1</span>
+                <span class="how-text">Abra o app do seu banco e vá em <strong style="color:var(--text)">Pix</strong> → <strong style="color:var(--text)">Pagar com QR Code</strong> ou <strong style="color:var(--text)">Copia e Cola</strong>.</span>
+              </div>
+              <div class="how-step">
+                <span class="how-num">2</span>
+                <span class="how-text">Escaneie o QR code ou cole o código copiado.</span>
+              </div>
+              <div class="how-step">
+                <span class="how-num">3</span>
+                <span class="how-text">Confirme o valor e finalize o pagamento. A confirmação é imediata.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State: paid / success -->
+        <div class="state" id="state-success">
+          <div class="success-wrap">
+            <div class="success-icon">✓</div>
+            <div class="success-title">Pagamento confirmado!</div>
+            <div class="success-sub" id="success-sub">Seu pedido foi recebido e está sendo processado.</div>
+          </div>
+        </div>
+
+        <!-- State: error / expired -->
+        <div class="state" id="state-error">
+          <div class="error-wrap">
+            <div class="error-icon">✕</div>
+            <div class="error-title" id="error-title">Pagamento não realizado</div>
+            <div class="error-sub" id="error-sub">O prazo expirou ou ocorreu um erro. Volte à loja e tente novamente.</div>
+          </div>
+        </div>
+
+      </div><!-- /card-body -->
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <a class="back-link" id="back-link" href="javascript:history.back()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Voltar à loja
+        </a>
+        <span class="footer-brand">
+          Processado por <strong>CheckoutPay</strong>
+        </span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ── URL Params ──────────────────────────────────────────────
+    const params  = new URLSearchParams(window.location.search);
+    const tid     = params.get("tid")    || "";
+    const ref     = params.get("ref")    || "";
+    const amount  = parseInt(params.get("amount") || "0", 10);
+    const method  = (params.get("method") || "pix").toLowerCase();
+    const storeUrl = params.get("store") || document.referrer || "";
+
+    // ── State ───────────────────────────────────────────────────
+    let currentStatus = "loading";
+    let pixCode       = "";
+    let pollTimer     = null;
+    let expiresAt     = null;
+    let timerInterval = null;
+
+    const PAID_STATUSES  = ["paid", "approved", "captured", "settled", "completed", "concluido", "concluída"];
+    const FAIL_STATUSES  = ["failed", "cancelled", "canceled", "expired", "refused", "refunded", "chargeback"];
+
+    // ── DOM refs ────────────────────────────────────────────────
+    const $ref    = document.getElementById("order-ref");
+    const $amount = document.getElementById("order-amount");
+    const $badge  = document.getElementById("method-badge");
+    const $back   = document.getElementById("back-link");
+
+    function fmtMoney(cents, cur = "BRL") {
+      return new Intl.NumberFormat("pt-BR", { style: "currency", currency: cur })
+        .format((Number(cents) || 0) / 100);
+    }
+
+    function setState(name) {
+      document.querySelectorAll(".state").forEach(el => el.classList.remove("active"));
+      const el = document.getElementById("state-" + name);
+      if (el) el.classList.add("active");
+      currentStatus = name;
+    }
+
+    // ── Initial render ──────────────────────────────────────────
+    $ref.textContent    = ref  ? `Ref: ${ref}`    : "Pedido";
+    $amount.textContent = amount > 0 ? fmtMoney(amount) : "—";
+    $badge.textContent  = method === "pix" ? "PIX" : method === "boleto" ? "Boleto" : "Cartão";
+
+    if (storeUrl) $back.href = storeUrl;
+
+    // ── QR code render ──────────────────────────────────────────
+    function renderQr(qrCodeBase64, qrCode) {
+      const box = document.getElementById("qr-img-box");
+      if (qrCodeBase64) {
+        const src = qrCodeBase64.startsWith("data:") ? qrCodeBase64 : `data:image/png;base64,${qrCodeBase64}`;
+        box.innerHTML = `<img src="${src}" alt="QR Code PIX">`;
+      } else {
+        box.innerHTML = `<div class="qr-placeholder" style="padding:20px;text-align:center;font-size:11px;color:#888;">
+          QR Code<br>indisponível<br><span style="font-size:9px;">Use o código abaixo</span>
+        </div>`;
+      }
+
+      if (qrCode) {
+        pixCode = qrCode;
+        const wrap = document.getElementById("pix-code-wrap");
+        const txt  = document.getElementById("pix-code-text");
+        wrap.style.display = "block";
+        txt.textContent = qrCode.length > 80 ? qrCode.slice(0, 80) + "..." : qrCode;
+      }
+    }
+
+    // ── Timer ────────────────────────────────────────────────────
+    function startTimer(minutes = 30) {
+      expiresAt = Date.now() + minutes * 60 * 1000;
+      const wrap = document.getElementById("timer-wrap");
+      const val  = document.getElementById("timer-val");
+      wrap.style.display = "flex";
+
+      timerInterval = setInterval(() => {
+        const remaining = expiresAt - Date.now();
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          if (currentStatus === "pix") {
+            setState("error");
+            document.getElementById("error-title").textContent = "PIX expirado";
+            document.getElementById("error-sub").textContent   = "O prazo de 30 minutos encerrou. Volte à loja e gere um novo pedido.";
+          }
+          return;
+        }
+        const m = Math.floor(remaining / 60000);
+        const s = Math.floor((remaining % 60000) / 1000);
+        val.textContent = `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+        if (remaining < 5 * 60 * 1000) val.classList.add("urgent");
+      }, 1000);
+    }
+
+    // ── Copy PIX ─────────────────────────────────────────────────
+    function copyPix() {
+      const code = pixCode;
+      if (!code) return;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById("copy-btn");
+        btn.textContent = "✓  Copiado!";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copiar código PIX`;
+          btn.classList.remove("copied");
+        }, 2500);
+      }).catch(() => {
+        // Fallback: select text
+        const el = document.getElementById("pix-code-text");
+        if (el) {
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          window.getSelection().removeAllRanges();
+          window.getSelection().addRange(range);
+        }
+      });
+    }
+
+    // ── Status polling ────────────────────────────────────────────
+    async function fetchStatus() {
+      if (!tid) return null;
+      try {
+        const res  = await fetch(`/api/status?id=${encodeURIComponent(tid)}`);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch {
+        return null;
+      }
+    }
+
+    function handleStatus(data) {
+      if (!data) return;
+
+      const status = String(data.status || "").toLowerCase();
+
+      if (PAID_STATUSES.some(s => status.includes(s))) {
+        clearInterval(pollTimer);
+        clearInterval(timerInterval);
+        setState("success");
+        const sub = document.getElementById("success-sub");
+        if (ref) sub.textContent = `Pedido ${ref} pago com sucesso!`;
+        return;
+      }
+
+      if (FAIL_STATUSES.some(s => status.includes(s))) {
+        clearInterval(pollTimer);
+        clearInterval(timerInterval);
+        setState("error");
+        if (status.includes("expir")) {
+          document.getElementById("error-title").textContent = "PIX expirado";
+          document.getElementById("error-sub").textContent   = "Volte à loja e gere um novo pedido.";
+        }
+        return;
+      }
+
+      // Still pending — show PIX state
+      if (currentStatus === "loading" || currentStatus === "pix") {
+        if (currentStatus === "loading") {
+          setState("pix");
+          renderQr(data.qrCodeBase64, data.qrCode);
+          startTimer(30);
+          if (amount <= 0 && data.amount > 0) {
+            $amount.textContent = fmtMoney(data.amount, data.currency);
+          }
+        }
+      }
+    }
+
+    // ── Boot ──────────────────────────────────────────────────────
+    async function boot() {
+      if (!tid) {
+        setState("error");
+        document.getElementById("error-title").textContent = "Link inválido";
+        document.getElementById("error-sub").textContent   = "Parâmetro de transação ausente.";
+        return;
+      }
+
+      const data = await fetchStatus();
+      handleStatus(data);
+
+      // Poll every 3s while pending
+      pollTimer = setInterval(async () => {
+        if (currentStatus === "success" || currentStatus === "error") return;
+        const d = await fetchStatus();
+        handleStatus(d);
+      }, 3000);
+    }
+
+    boot();
+  </script>
+</body>
+</html>

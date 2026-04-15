@@ -1,0 +1,37 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches:
+      - main      # Deploy automático a cada push na main
+  workflow_dispatch:  # Permite rodar manualmente pelo GitHub
+
+env:
+  VERCEL_ORG_ID:     ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Deploy para Vercel (produção)
+        run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+
+      - name: Mostrar URL do deploy
+        run: |
+          URL=$(npx vercel --token ${{ secrets.VERCEL_TOKEN }} ls --meta 2>/dev/null | head -5 || echo "Ver dashboard Vercel")
+          echo "Deploy concluído: $URL"
