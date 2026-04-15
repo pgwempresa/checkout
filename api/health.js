@@ -1,4 +1,4 @@
-import { getRuntimeInfo, getStoreConnectionStatus, loadStateForDebug } from "../lib/runtime/state.js";
+import { getRuntimeInfo, getStoreConnectionStatus } from "../lib/runtime/state.js";
 
 async function handler(req, res) {
     if (req.method !== "GET") {
@@ -9,7 +9,6 @@ async function handler(req, res) {
     let kvTestSuccess = false;
     let rawKvGet = null;
     try {
-        rawKvGet = await loadStateForDebug();
         const url = process.env.KV_REST_API_URL || process.env.STORAGE_REST_API_URL;
         const token = process.env.KV_REST_API_TOKEN || process.env.STORAGE_REST_API_TOKEN;
         if(url && token) {
