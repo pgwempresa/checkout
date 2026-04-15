@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "node --test lib/**/*.test.js",
-    "start": "node server.js",
+    "start": "node server.local.js",
     "dev": "vercel dev",
     "setup": "node scripts/vercel-setup.mjs",
     "setup:deploy": "node scripts/vercel-setup.mjs --deploy",
