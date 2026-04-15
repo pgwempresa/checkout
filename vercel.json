@@ -1,11 +1,7 @@
 {
   "version": 2,
-  "routes": [
-    { "src": "/checkout-client.js", "dest": "/checkout-client.js" },
-    { "src": "/assets/(.*)",        "dest": "/assets/$1" },
-    { "src": "/login",              "dest": "/login.html" },
-    { "src": "/checkout",           "dest": "/checkout.html" },
-    { "src": "/",                   "dest": "/index.html" },
-    { "handle": "filesystem" }
+  "rewrites": [
+    { "source": "/login",    "destination": "/login.html" },
+    { "source": "/checkout", "destination": "/checkout.html" }
   ]
 }
