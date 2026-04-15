@@ -1,6 +1,4 @@
-import { cors } from "../lib/api/cors.js";
-import { getActiveProviderId } from "../lib/providers/index.js";
-import { getRuntimeInfo, getStoreConnectionStatus } from "../lib/runtime/state.js";
+import { getRuntimeInfo, getStoreConnectionStatus, loadStateForDebug } from "../lib/runtime/state.js";
 
 async function handler(req, res) {
     if (req.method !== "GET") {
@@ -9,7 +7,9 @@ async function handler(req, res) {
 
     let kvTestError = null;
     let kvTestSuccess = false;
+    let rawKvGet = null;
     try {
+        rawKvGet = await loadStateForDebug();
         const url = process.env.KV_REST_API_URL || process.env.STORAGE_REST_API_URL;
         const token = process.env.KV_REST_API_TOKEN || process.env.STORAGE_REST_API_TOKEN;
         if(url && token) {
@@ -36,6 +36,7 @@ async function handler(req, res) {
             ...getRuntimeInfo(), 
             kvTestSuccess,
             kvTestError,
+            rawKvGet,
             envKeys: Object.keys(process.env).filter(k => k.includes('KV') || k.includes('UPSTASH') || k.includes('STORAGE') || k.includes('REST') || k.includes('TOKEN')).join(', ')
         },
         connection:     await getStoreConnectionStatus()
