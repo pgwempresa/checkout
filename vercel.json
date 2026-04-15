@@ -1,12 +1,15 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/**/*.js", "use": "@vercel/node" }
+    { "src": "api/**/*.js",        "use": "@vercel/node"   },
+    { "src": "*.html",             "use": "@vercel/static" },
+    { "src": "checkout-client.js", "use": "@vercel/static" },
+    { "src": "assets/**",          "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/api/(.*)",  "dest": "/api/$1" },
-    { "handle": "filesystem" },
-    { "src": "/login",     "dest": "/login.html" },
-    { "src": "/checkout",  "dest": "/checkout.html" }
+    { "src": "/api/(.*)", "dest": "/api/$1"    },
+    { "handle": "filesystem"                   },
+    { "src": "/login",    "dest": "/login.html" },
+    { "src": "/checkout", "dest": "/checkout.html" }
   ]
 }
