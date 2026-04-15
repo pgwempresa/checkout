@@ -10,21 +10,34 @@ async function handler(req, res) {
     let kvTestError = null;
     let kvTestSuccess = false;
     let rawKvGet = null;
+    let kvGetOutput = null;
+    let debugTrace = {};
+    
     try {
-        const url = process.env.KV_REST_API_URL || process.env.STORAGE_REST_API_URL;
-        const token = process.env.KV_REST_API_TOKEN || process.env.STORAGE_REST_API_TOKEN;
-        if(url && token) {
-            const fetchRes = await fetch(`${url}/pipeline`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify([["GET", "checkout:state"]])
-            });
-            const data = await fetchRes.json();
-            kvTestSuccess = true;
-            rawKvGet = data;
-        } else {
-            kvTestError = "Missing url or token";
+        const { getStorageMode, getKvConfig } = await import("../lib/runtime/state.js");
+        if (getStorageMode() === "redis") {
+            const { url, token } = getKvConfig();
+            debugTrace.kvConfig = { hasUrl: !!url, hasToken: !!token };
+            if (!url || !token) {
+                kvGetOutput = "Missing url or token inside state.js getKvConfig";
+            } else {
+                const fetchRes = await fetch(`${url}/pipeline`, {
+                    method: "POST",
+                    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                    body: JSON.stringify([["GET", "checkout:state"]])
+                });
+                const data = await fetchRes.json();
+                kvGetOutput = data;
+                
+                const item = data?.[0]?.result;
+                debugTrace.itemRaw = item;
+                debugTrace.itemType = typeof item;
+                if (item) {
+                     try { debugTrace.parsed = JSON.parse(item); } catch(e) { debugTrace.parseError = e.message; }
+                }
+            }
         }
+        
     } catch(err) {
         kvTestError = err.message;
     }
@@ -38,6 +51,8 @@ async function handler(req, res) {
             kvTestSuccess,
             kvTestError,
             rawKvGet,
+            kvGetOutput,
+            debugTrace,
             envKeys: Object.keys(process.env).filter(k => k.includes('KV') || k.includes('UPSTASH') || k.includes('STORAGE') || k.includes('REST') || k.includes('TOKEN')).join(', ')
         },
         connection:     await getStoreConnectionStatus()
