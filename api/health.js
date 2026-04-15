@@ -17,11 +17,11 @@ async function handler(req, res) {
             const fetchRes = await fetch(`${url}/pipeline`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify([["SET", "test_ping", "ping"], ["GET", "test_ping"]])
+                body: JSON.stringify([["GET", "checkout:state"]])
             });
             const data = await fetchRes.json();
             kvTestSuccess = true;
-            kvTestError = JSON.stringify(data);
+            rawKvGet = data;
         } else {
             kvTestError = "Missing url or token";
         }
