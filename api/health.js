@@ -11,7 +11,10 @@ async function handler(req, res) {
         ok:             true,
         now:            new Date().toISOString(),
         activeProvider: await getActiveProviderId(),
-        runtime:        { ...getRuntimeInfo(), dbgUrl: process.env.STORAGE_REST_API_URL?.substring(0,10), dbgTok: !!process.env.STORAGE_REST_API_TOKEN },
+        runtime:        { 
+            ...getRuntimeInfo(), 
+            envKeys: Object.keys(process.env).filter(k => k.includes('KV') || k.includes('UPSTASH') || k.includes('STORAGE') || k.includes('REST') || k.includes('TOKEN')).join(', ')
+        },
         connection:     await getStoreConnectionStatus()
     });
 }
