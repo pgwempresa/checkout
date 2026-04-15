@@ -14,11 +14,16 @@ async function handler(req, res) {
 
     const startConnection = await getStoreConnectionStatus();
     
-    // Attempt the ping
-    const connection = await recordStorePing(req.body || {});
+    let connection = null;
+    let debugTrace = { startConnection };
     
-    // Explicit debug to see why kvSet failed for recordStorePing
-    let debugTrace = { startConnection, connection };
+    try {
+        connection = await recordStorePing(req.body || {});
+    } catch(err) {
+        debugTrace.recordPingError = err.message;
+        debugTrace.recordPingStack = err.stack;
+    }
+
     try {
         const { default: debugUrl } = await import("url");
         const { getKvConfig } = await import("../../lib/runtime/state.js");
